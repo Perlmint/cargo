@@ -105,8 +105,10 @@ pub fn clean(ws: &Workspace<'_>, opts: &CleanOptions<'_>) -> CargoResult<()> {
                             )
                         };
                         let features = resolve.features_sorted(pkg.package_id());
+                        let vars = resolve.vars_sorted(pkg.package_id());
                         units.push(bcx.units.intern(
-                            pkg, target, profile, *kind, *mode, features, /*is_std*/ false,
+                            pkg, target, profile, *kind, *mode, features, vars,
+                            /*is_std*/ false,
                         ));
                     }
                 }

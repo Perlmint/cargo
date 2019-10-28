@@ -148,6 +148,7 @@ pub fn resolve(
             .iter()
             .map(|(k, v)| (*k, v.iter().map(|x| x.to_string()).collect()))
             .collect(),
+        HashMap::new(), // TODO: fill
         cksums,
         BTreeMap::new(),
         Vec::new(),

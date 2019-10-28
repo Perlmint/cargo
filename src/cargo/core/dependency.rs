@@ -44,6 +44,8 @@ struct Inner {
     // This dependency should be used only for this platform.
     // `None` means *all platforms*.
     platform: Option<Platform>,
+
+    vars: Vec<(InternedString, InternedString)>,
 }
 
 #[derive(Serialize)]
@@ -61,6 +63,7 @@ struct SerializedDependency<'a> {
     /// The registry URL this dependency is from.
     /// If None, then it comes from the default registry (crates.io).
     registry: Option<&'a str>,
+    vars: &'a [(InternedString, InternedString)],
 }
 
 impl ser::Serialize for Dependency {
@@ -80,6 +83,7 @@ impl ser::Serialize for Dependency {
             target: self.platform(),
             rename: self.explicit_name_in_toml().map(|s| s.as_str()),
             registry: registry_id.as_ref().map(|sid| sid.url().as_str()),
+            vars: self.vars(),
         }
         .serialize(s)
     }
@@ -217,6 +221,7 @@ impl Dependency {
                 specified_req: false,
                 platform: None,
                 explicit_name_in_toml: None,
+                vars: Vec::new(),
             }),
         }
     }
@@ -310,6 +315,10 @@ impl Dependency {
     /// If some, it must only be built for the specified platform.
     pub fn platform(&self) -> Option<&Platform> {
         self.inner.platform.as_ref()
+    }
+
+    pub fn vars(&self) -> &[(InternedString, InternedString)] {
+        &self.inner.vars
     }
 
     /// The renamed name of this dependency, if any.

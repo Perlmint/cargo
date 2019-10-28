@@ -53,6 +53,7 @@ pub struct CompileOptions<'a> {
     pub all_features: bool,
     /// Flag if the default feature should be built for the root package
     pub no_default_features: bool,
+    pub vars: Vec<(String, String)>,
     /// A set of packages to build.
     pub spec: Packages,
     /// Filter to apply to the root package to select which targets will be
@@ -81,6 +82,7 @@ impl<'a> CompileOptions<'a> {
             features: Vec::new(),
             all_features: false,
             no_default_features: false,
+            vars: Vec::new(),
             spec: ops::Packages::Packages(Vec::new()),
             filter: CompileFilter::Default {
                 required_features_filterable: false,
@@ -266,6 +268,7 @@ pub fn compile_ws<'a>(
         ref features,
         all_features,
         no_default_features,
+        ref vars,
         ref filter,
         ref target_rustdoc_args,
         ref target_rustc_args,
@@ -705,6 +708,7 @@ fn generate_targets<'a>(
             bcx.build_config.profile_kind.clone(),
         );
         let features = resolve.features_sorted(pkg.package_id());
+        let vars = resolve.vars_sorted(pkg.package_id());
         bcx.units.intern(
             pkg,
             target,
@@ -712,6 +716,7 @@ fn generate_targets<'a>(
             kind,
             target_mode,
             features,
+            vars,
             /*is_std*/ false,
         )
     };

@@ -51,6 +51,8 @@ pub struct UnitInner<'a> {
     /// The `cfg` features to enable for this unit.
     /// This must be sorted.
     pub features: Vec<&'a str>,
+    /// Custom variables to use in build script.
+    pub vars: Vec<(&'a str, &'a str)>,
     /// Whether this is a standard library unit.
     pub is_std: bool,
 }
@@ -106,6 +108,7 @@ impl<'a> fmt::Debug for Unit<'a> {
             .field("kind", &self.kind)
             .field("mode", &self.mode)
             .field("features", &self.features)
+            .field("vars", &self.vars)
             .finish()
     }
 }
@@ -146,6 +149,7 @@ impl<'a> UnitInterner<'a> {
         kind: CompileKind,
         mode: CompileMode,
         features: Vec<&'a str>,
+        vars: Vec<(&'a str, &'a str)>,
         is_std: bool,
     ) -> Unit<'a> {
         let inner = self.intern_inner(&UnitInner {
@@ -155,6 +159,7 @@ impl<'a> UnitInterner<'a> {
             kind,
             mode,
             features,
+            vars,
             is_std,
         });
         Unit { inner }

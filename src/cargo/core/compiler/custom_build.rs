@@ -187,6 +187,10 @@ fn build_work<'a, 'cfg>(cx: &mut Context<'a, 'cfg>, unit: &Unit<'a>) -> CargoRes
         cmd.env(&format!("CARGO_FEATURE_{}", super::envify(feat)), "1");
     }
 
+    for (key, val) in &unit.vars {
+        cmd.env(&format!("CARGO_VAR_{}", super::envify(key)), val);
+    }
+
     let mut cfg_map = HashMap::new();
     for cfg in bcx.cfg(unit.kind) {
         match *cfg {

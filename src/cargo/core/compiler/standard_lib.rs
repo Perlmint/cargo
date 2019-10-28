@@ -144,8 +144,9 @@ pub fn generate_std_roots<'a>(
                 bcx.build_config.profile_kind.clone(),
             );
             let features = std_resolve.features_sorted(pkg.package_id());
+            let vars = std_resolve.vars_sorted(pkg.package_id());
             Ok(bcx.units.intern(
-                pkg, lib, profile, kind, mode, features, /*is_std*/ true,
+                pkg, lib, profile, kind, mode, features, vars, /*is_std*/ true,
             ))
         })
         .collect::<CargoResult<Vec<_>>>()

@@ -112,6 +112,14 @@ pub trait AppExt: Sized {
         ))
     }
 
+    fn arg_vars(self) -> Self {
+        self._arg(multi_opt(
+            "vars",
+            "VARS",
+            "Space-separated key-value list of vars",
+        ))
+    }
+
     fn arg_release(self, release: &'static str) -> Self {
         self._arg(opt("release", release))
     }
@@ -425,6 +433,16 @@ pub trait ArgMatchesExt {
             config,
             build_config,
             features: self._values_of("features"),
+            vars: self
+                ._values_of("vars")
+                .iter()
+                .map(|ref val| {
+                    let mut itr = val.splitn(2, '=');
+                    let key = String::from(itr.next().unwrap());
+                    let val = String::from(itr.next().unwrap());
+                    (key, val)
+                })
+                .collect(),
             all_features: self._is_present("all-features"),
             no_default_features: self._is_present("no-default-features"),
             spec,

@@ -20,6 +20,7 @@ pub fn cli() -> App {
         .arg_target_dir()
         .arg_manifest_path()
         .arg_features()
+        .arg_vars()
         .arg_jobs()
         .arg_dry_run("Perform all checks without uploading")
         .arg(opt("registry", "Registry to publish to").value_name("REGISTRY"))
@@ -43,6 +44,16 @@ pub fn exec(config: &mut Config, args: &ArgMatches<'_>) -> CliResult {
             dry_run: args.is_present("dry-run"),
             registry,
             features: args._values_of("features"),
+            vars: args
+                ._values_of("vars")
+                .iter()
+                .map(|ref kv| {
+                    let mut itr = kv.splitn(2, '=');
+                    let key = String::from(itr.next().unwrap());
+                    let val = String::from(itr.next().unwrap());
+                    (key, val)
+                })
+                .collect(),
             all_features: args.is_present("all-features"),
             no_default_features: args.is_present("no-default-features"),
         },

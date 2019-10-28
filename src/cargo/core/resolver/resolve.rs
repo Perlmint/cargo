@@ -31,6 +31,8 @@ pub struct Resolve {
     empty_features: HashSet<String>,
     /// Features enabled for a given package.
     features: HashMap<PackageId, HashSet<String>>,
+    empty_vars: HashMap<String, String>,
+    vars: HashMap<PackageId, HashMap<String, String>>,
     /// Checksum for each package. A SHA256 hash of the `.crate` file used to
     /// validate the correct crate file is used. This is `None` for sources
     /// that do not use `.crate` files, like path or git dependencies.
@@ -70,6 +72,7 @@ impl Resolve {
         graph: Graph<PackageId, Vec<Dependency>>,
         replacements: HashMap<PackageId, PackageId>,
         features: HashMap<PackageId, HashSet<String>>,
+        vars: HashMap<PackageId, HashMap<String, String>>,
         checksums: HashMap<PackageId, Option<String>>,
         metadata: Metadata,
         unused_patches: Vec<PackageId>,
@@ -101,6 +104,8 @@ impl Resolve {
             unused_patches,
             empty_features: HashSet::new(),
             reverse_replacements,
+            empty_vars: HashMap::new(),
+            vars,
             public_dependencies,
             version,
         }
@@ -280,6 +285,16 @@ unable to verify that `{0}` is the same as when the lockfile was generated
 
     pub fn features_sorted(&self, pkg: PackageId) -> Vec<&str> {
         let mut v = Vec::from_iter(self.features(pkg).iter().map(|s| s.as_ref()));
+        v.sort_unstable();
+        v
+    }
+
+    pub fn vars(&self, pkg: PackageId) -> &HashMap<String, String> {
+        self.vars.get(&pkg).unwrap_or(&self.empty_vars)
+    }
+
+    pub fn vars_sorted(&self, pkg: PackageId) -> Vec<(&str, &str)> {
+        let mut v = Vec::from_iter(self.vars(pkg).iter().map(|(k, v)| (k.as_ref(), v.as_ref())));
         v.sort_unstable();
         v
     }

@@ -28,6 +28,7 @@ pub fn cli() -> App {
         .arg_target_triple("Build for the target triple")
         .arg_target_dir()
         .arg_features()
+        .arg_vars()
         .arg_manifest_path()
         .arg_jobs()
 }
@@ -45,6 +46,16 @@ pub fn exec(config: &mut Config, args: &ArgMatches<'_>) -> CliResult {
             target: args.target(),
             jobs: args.jobs()?,
             features: args._values_of("features"),
+            vars: args
+                ._values_of("vars")
+                .iter()
+                .map(|ref kv| {
+                    let mut itr = kv.splitn(2, '=');
+                    let key = String::from(itr.next().unwrap());
+                    let val = String::from(itr.next().unwrap());
+                    (key, val)
+                })
+                .collect(),
             all_features: args.is_present("all-features"),
             no_default_features: args.is_present("no-default-features"),
         },

@@ -337,6 +337,7 @@ impl EncodableResolve {
             g,
             replacements,
             HashMap::new(),
+            HashMap::new(),
             checksums,
             metadata,
             unused_patches,

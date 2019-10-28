@@ -35,6 +35,7 @@ pub struct PackageOpts<'cfg> {
     pub jobs: Option<u32>,
     pub target: Option<String>,
     pub features: Vec<String>,
+    pub vars: Vec<(String, String)>,
     pub all_features: bool,
     pub no_default_features: bool,
 }
@@ -669,6 +670,7 @@ fn run_verify(ws: &Workspace<'_>, tar: &FileLock, opts: &PackageOpts<'_>) -> Car
             features: opts.features.clone(),
             no_default_features: opts.no_default_features,
             all_features: opts.all_features,
+            vars: opts.vars.clone(),
             spec: ops::Packages::Packages(Vec::new()),
             filter: ops::CompileFilter::Default {
                 required_features_filterable: true,

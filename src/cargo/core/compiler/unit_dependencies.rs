@@ -568,10 +568,17 @@ fn new_unit_dep_with_profile<'a>(
         .resolve()
         .is_public_dep(parent.pkg.package_id(), pkg.package_id());
     let features = state.resolve().features_sorted(pkg.package_id());
-    let unit = state
-        .bcx
-        .units
-        .intern(pkg, target, profile, kind, mode, features, state.is_std);
+    let vars = state.resolve().vars_sorted(pkg.package_id());
+    let unit = state.bcx.units.intern(
+        pkg,
+        target,
+        profile,
+        kind,
+        mode,
+        features,
+        vars,
+        state.is_std,
+    );
     Ok(UnitDep {
         unit,
         unit_for,
